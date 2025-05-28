@@ -2,17 +2,21 @@ package org.epam;
 
 import io.restassured.RestAssured;
 import org.apache.http.HttpStatus;
+import org.epam.util.PropertyReader;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.HashMap;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class UsersAPITest {
+    private final PropertyReader reader = new PropertyReader();
 
     @BeforeClass
     public void setup() {
-        RestAssured.baseURI = "https://jsonplaceholder.typicode.com/users";
+        RestAssured.baseURI = reader.getProperty("baseURL");
     }
 
     @Test
@@ -57,12 +61,11 @@ public class UsersAPITest {
 
     @Test
     public void patchTest() {
+        HashMap<Object, Object> map = new HashMap();
+        map.put("name", "John");
+        map.put("username", "qwerty");
         given()
-                .body("""
-                        {
-                        "name": "John"
-                        }
-                        """)
+                .body(map)
                 .when()
                 .patch("/1")
                 .then()
